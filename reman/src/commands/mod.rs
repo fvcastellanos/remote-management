@@ -1,36 +1,18 @@
-extern crate clap;
+use clap::ArgMatches;
+use crate::configuration;
+use ansi_term::Colour::{ Cyan };
 
-use clap::{ App, SubCommand, Arg };
+pub fn configuration(matches: &ArgMatches) {
 
-pub const PING: &str = "ping";
-pub const CONFIG: &str = "config";
+    println!("{}", Cyan.paint("ReMan CLI configuration"));
+    println!("{}", Cyan.paint("-----------------------"));
 
-pub fn build_application() -> App<'static, 'static> {
+    if matches.is_present("list") {
 
-    App::new("Remote Management")
-        .author("DoRefactor")
-        .about("Management tool for remote hosts")
-        .version("1.0")
-        .subcommand(ping_command())
-        .subcommand(config_command())
+        let config = configuration::read_configuration();
+        println!("foo: {}", config);
+        return;
+    }
+
+    configuration::init_configuration();
 }
-
-// ------------------------------------------------------------------------
-
-fn ping_command() -> App<'static, 'static> {
-
-    SubCommand::with_name(PING)
-        .about("Ping remote host")
-}
-
-fn config_command() -> App<'static, 'static> {
-
-    SubCommand::with_name(CONFIG)
-        .about("Initial configuration")
-        .arg(
-            Arg::with_name("list")
-                .short("l")
-                .help("Display configuration")
-        )
-}
-
